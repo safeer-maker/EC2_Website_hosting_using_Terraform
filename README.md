@@ -12,6 +12,7 @@ VPC
 - create vpc my giving name and CIDR IP4.
 - Create sub net
     * chose VPC ID, Sub net name, az, CIDR ip for subnet
+    * Create atleast two subnets
 - Create Internet gateway
     * Attach internet gateway to VPC
 - Create Routing table 
@@ -20,7 +21,7 @@ VPC
     * Edit route and attach Internet gatewasy and provide destination
 - Create a security Group
     * Name of security Group, add description
-    * Outbond Rule chose type=http, destination= anyware ipv4
+    * Inbound Rule chose type=http, destination= anyware ipv4
 
 EC2
  - Create Key pair
@@ -35,7 +36,24 @@ EC2
         + chose subnet
         + Auto assign public IP **
         + select Security Group
-        + add user data 
+        + add user data
+
+ - Create Target Groups 
+    * Chose Basic Configuration (Instance)
+    * Name of Group Name
+    * Protocal:Port (HTTP:80)
+    * IP address type (IPv4)
+    * VPC (Chose the VPC)
+    * select subnets atleast two
+    * Protocal version (HTTP1)
+    *
+
+ - Create Launch Template:
+    * Name of Template
+    * Create Basic Configure
+    * Check network, VPC, mappings,
+    * Security Group
+    * Listeners 
 
 
 S3
