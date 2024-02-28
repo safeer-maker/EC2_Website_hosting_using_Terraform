@@ -22,9 +22,34 @@ resource "aws_vpc" "main" {
 
 ## Subnets
 
-Subnets are AZ scoped. All resources in an AZ are hosted in that specific subnet. Subnets can be isolate the network in same AZ with multiple subnets
+Subnets are AZ scoped. All resources in an AZ are hosted in that specific subnet. Subnets can be isolate the network in same AZ with multiple subnets.
+
+[Subnets in terraform](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet)
+
+```go
+resource "aws_subnet" "main" {
+  vpc_id     = aws_vpc.main.id
+  cidr_block = "10.0.1.0/24"
+}
+
+```
+
+ > Creating two public subnets for testing purposes. They did not serve the application purposed but testing is always good.
+ > Two private subnets will be used for cloudfront destribution. 
 
 ## Internet gateway
+
+Internet gateway provides internet resource to subnets. Internet gaetway attached subnet resources have access to internet. 
+
+> you can also provide internet to update or pach your resources using NAT gateway. Nat gatewasy provide resources to private resources while keeping there state private.
+
+[Internet gateway in terraform](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway)
+
+```go
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.main.id
+}
+```
 
 ## Route table
 

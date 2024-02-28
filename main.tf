@@ -1,4 +1,12 @@
 terraform {
+    cloud {
+      organization = "safeerahmad"
+      workspaces {
+        project = "web_ec2_hosting"
+        tags = [ "environment", "ubuntu" ]
+      }
+    }
+
     required_providers {
         aws = {
         source  = "hashicorp/aws"
