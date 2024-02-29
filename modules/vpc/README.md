@@ -53,4 +53,42 @@ resource "aws_internet_gateway" "gw" {
 
 ## Route table
 
+Routing table privides network connection between sub nets. It is like a network switch that connect muliple subnets with each other and network gateway.
+
+```go
+resource "aws_route_table" "example" {
+  vpc_id = aws_vpc.example.id
+
+  route {
+    cidr_block = "10.0.1.0/24"
+    gateway_id = aws_internet_gateway.example.id
+  }
+}
+```
+
+Route table can attach inline network or NAT gateway.
+
+To attach a subnet to route table you need to add `aws_route_table_association`module. ** Each subnet must have a seperate table association module to associate it to route table**
+```go
+resource "aws_route_table_association" "public_subnet_1_association" {
+  route_table_id = aws_route_table.my_route_table.id
+  subnet_id = aws_subnet.public_subnet_1.id
+}
+```
+
 ## Security Group
+
+Security group is the firewall that allow or denay protocal level access to compute.
+By default SG allow all outbound rules but in Terraform you have to define then seperately.
+
+> Inbound and outbound both rules needed to define in terraform to allow communcation.
+
+```go
+resource "aws_security_group" "example" {
+  name   = "sg"
+  vpc_id = aws_vpc.example.id
+
+  ingress = []
+  egress  = []
+}
+```

@@ -64,3 +64,72 @@ resource "aws_internet_gateway" "gw" {
     Name = local.ig_name
   }
 }
+
+
+#Public Route Table
+# resource "aws_route_table" "example" {
+#   vpc_id = aws_vpc.tf_vpc.id
+
+#   # route {
+#   #   cidr_block = "10.0.1.0/24"
+#   #    //= aws_subnet.public_subnet_1.id
+#   # }
+
+#   route {
+#     cidr_block = "10.0.0.0/24"
+#     gateway_id = aws_internet_gateway.gw.id
+#   }
+
+#   tags = {
+#     terraform = "true"
+#     Name = local.rtc_name
+#   }
+# }
+
+resource "aws_route_table" "my_route_table" {
+  vpc_id = aws_vpc.tf_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.gw.id
+  }
+
+  tags = {
+    terraform = "true"
+    Name      = local.rtc_name
+  }
+}
+
+resource "aws_route_table_association" "public_subnet_1_association" {
+  route_table_id = aws_route_table.my_route_table.id
+  subnet_id = aws_subnet.public_subnet_1.id
+}
+
+resource "aws_route_table_association" "public_subnet_2_association" {
+  route_table_id = aws_route_table.my_route_table.id
+  subnet_id = aws_subnet.public_subnet_1.id
+}
+
+
+
+resource "aws_security_group" "example" {
+  name   = "web_tf_http_allow"
+  vpc_id = aws_vpc.tf_vpc.id
+  
+  # Alowing http incoming only
+  ingress {
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+
+  }
+  # all outbond ports are allowed
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1" # '-1' defined all ports
+    cidr_blocks      = ["0.0.0.0/0"]
+
+  }
+}
