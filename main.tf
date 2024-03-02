@@ -22,3 +22,10 @@ provider "aws" {
 module "vpc" {
     source = "./modules/vpc"
 }
+
+module "ec2" {
+    source = "./modules/ec2"
+    subnet_1_id = module.vpc.public_subnet_1_id
+    security_group_http = module.vpc.security_group_http
+    
+}

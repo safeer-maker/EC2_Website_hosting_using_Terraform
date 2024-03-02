@@ -1,5 +1,5 @@
 locals {
-  availability_zone   = "us-east-1a"
+  availability_zone_1   = "us-east-1a"
   availability_zone_2 = "us-east-1b"
 }
 
@@ -32,6 +32,7 @@ resource "aws_vpc" "tf_vpc" {
 resource "aws_subnet" "public_subnet_1" {
   vpc_id     = aws_vpc.tf_vpc.id
   cidr_block = "10.0.1.0/24"
+  availability_zone = local.availability_zone_1
 
   tags = {
     terraform = "true"
@@ -43,6 +44,7 @@ resource "aws_subnet" "public_subnet_1" {
 resource "aws_subnet" "public_subnet_2" {
   vpc_id     = aws_vpc.tf_vpc.id
   cidr_block = "10.0.2.0/24"
+  availability_zone = local.availability_zone_2
 
   tags = {
     terraform = "true"
@@ -88,7 +90,7 @@ resource "aws_route_table_association" "public_subnet_2_association" {
 
 
 
-resource "aws_security_group" "example" {
+resource "aws_security_group" "security_group_http" {
   name   = "web_tf_http_allow"
   vpc_id = aws_vpc.tf_vpc.id
   
