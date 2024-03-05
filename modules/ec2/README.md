@@ -45,3 +45,27 @@ resource "aws_instance" "ec2_t2.micro" {
 
 > This is an example code dont use it.
 
+## Assigning Public IP Address
+
+Terraform will not assign public ip address be default. `public_ip = true` will not do any good. To assign public ip `associate_public_ip_address = true`.
+
+## User Data to EC2
+
+User data can be passed to ec2 instance by directely passing the code
+
+```go 
+user_data = <<-EOF
+              #!/bin/bash
+              # Use this for your user data (script from top to bottom)
+              # install httpd (Linux 2 version)
+              yum update -y
+              yum install -y httpd
+              systemctl start httpd
+              systemctl enable httpd
+              echo "<h1>Hello Safeer Ahmad from $(hostname -f)</h1>" > /var/www/html/index.html
+              EOF
+```
+
+The sh file can also be passed to load the script.
+`user_data = file("${path.module}/script.sh")`
+
