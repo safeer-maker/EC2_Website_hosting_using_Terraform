@@ -1,5 +1,6 @@
 locals{
   key_name = "demo-key-pair"
+  IAM_role = "EC2-IAM-S3-ReadAccess"
 }
 
 resource "aws_instance" "ec2_web" {
@@ -7,10 +8,12 @@ resource "aws_instance" "ec2_web" {
   instance_type = "t2.micro"
   key_name      = local.key_name
 
+  
   subnet_id     =  var.subnet_1_id
   vpc_security_group_ids = [var.security_group_h]
 
   associate_public_ip_address = true
+  iam_instance_profile = local.IAM_role
   
   user_data = <<-EOF
               #!/bin/bash

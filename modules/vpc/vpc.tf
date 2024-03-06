@@ -111,3 +111,25 @@ resource "aws_security_group" "security_group_http" {
 
   }
 }
+
+resource "aws_security_group" "security_group_ssh" {
+  name   = "web_tf_ssh_allow"
+  vpc_id = aws_vpc.tf_vpc.id
+  
+  # Alowing http incoming only
+  ingress {
+    from_port        = 22
+    to_port          = 22
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+
+  }
+  # all outbond ports are allowed
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1" # '-1' defined all ports
+    cidr_blocks      = ["0.0.0.0/0"]
+
+  }
+}
