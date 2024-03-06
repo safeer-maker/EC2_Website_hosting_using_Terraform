@@ -69,3 +69,4 @@ user_data = <<-EOF
 The sh file can also be passed to load the script.
 `user_data = file("${path.module}/script.sh")`
 
+## EC2 IAM role

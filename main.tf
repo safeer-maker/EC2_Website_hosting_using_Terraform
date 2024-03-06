@@ -28,6 +28,7 @@ module "ec2" {
     source = "./modules/ec2"
     subnet_1_id = module.vpc.public_subnet_1_id
     security_group_h = module.vpc.security_group_http
+    security_group_ssh = module.vpc.security_group_ssh
 
 }
 

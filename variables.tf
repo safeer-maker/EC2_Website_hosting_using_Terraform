@@ -6,3 +6,6 @@ variable "security_group_h" {
   type = string
 }
 
+variable "security_group_ssh" {
+  type = string
+}
