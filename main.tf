@@ -10,7 +10,7 @@ terraform {
     required_providers {
         aws = {
         source  = "hashicorp/aws"
-        version = "3.38.0"
+        version = "5.39.1"
         }
     }
 }
@@ -19,16 +19,17 @@ provider "aws" {
     region = "us-east-1"
 }
 
-# module "vpc" {
-#     source = "./modules/vpc"
-# }
+module "vpc" {
+    source = "./modules/vpc"
+}
 
-# module "ec2" {
-#     source = "./modules/ec2"
-#     subnet_1_id = module.vpc.public_subnet_1_id
-#     security_group_h = module.vpc.security_group_http
-#     security_group_ssh = module.vpc.security_group_ssh
-# }
+module "ec2" {
+    source = "./modules/ec2"
+    subnet_1_id = module.vpc.public_subnet_1_id
+    security_group_h = module.vpc.security_group_http
+    security_group_ssh = module.vpc.security_group_ssh
+    bucket_name = module.s3.s3_bucket_id
+}
 
 module "s3" {
   

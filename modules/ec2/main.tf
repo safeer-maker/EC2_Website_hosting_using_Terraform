@@ -19,9 +19,11 @@ resource "aws_instance" "ec2_web" {
               #!/bin/bash
               yum update -y
               yum install -y httpd
-              aws s3 sync s3://safeer-aws-cli-bucket-1234 ./web
+              systemctl start httpd
+              systemctl enable httpd
+              aws s3 sync s3://web-s3-bucket-tf-143/web ./web
               cp web/index.html /var/www/html/index.html
-              sudo systemctl start httpd
+              systemctl restart httpd
               EOF
   
   tags = {

@@ -9,3 +9,6 @@ variable "security_group_h" {
 variable "security_group_ssh" {
   type = string
 }
+variable "bucket_name" {
+  type = string
+}

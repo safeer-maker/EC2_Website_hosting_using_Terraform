@@ -50,7 +50,7 @@ output "aws_instance_id" {
 # output for S3 module
 
 output "bucket_name" {
-  value = aws_s3_bucket.bucket.id
+  value = module.s3.s3_bucket_id
   
 }
 
