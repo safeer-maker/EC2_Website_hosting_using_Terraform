@@ -19,16 +19,21 @@ provider "aws" {
     region = "us-east-1"
 }
 
-module "vpc" {
-    source = "./modules/vpc"
-}
+# module "vpc" {
+#     source = "./modules/vpc"
+# }
 
-module "ec2" {
+# module "ec2" {
+#     source = "./modules/ec2"
+#     subnet_1_id = module.vpc.public_subnet_1_id
+#     security_group_h = module.vpc.security_group_http
+#     security_group_ssh = module.vpc.security_group_ssh
+# }
 
-    source = "./modules/ec2"
-    subnet_1_id = module.vpc.public_subnet_1_id
-    security_group_h = module.vpc.security_group_http
-    security_group_ssh = module.vpc.security_group_ssh
+module "s3" {
+  
+  source = "./modules/s3"
+  bucket_name_web = var.bucket_name_web
 
 }
 
