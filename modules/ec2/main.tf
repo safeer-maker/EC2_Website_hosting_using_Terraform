@@ -17,17 +17,11 @@ resource "aws_instance" "ec2_web" {
   
   user_data = <<-EOF
               #!/bin/bash
-              # Use this for your user data (script from top to bottom)
-              # install httpd (Linux 2 version)
               yum update -y
               yum install -y httpd
-              # systemctl start httpd
-              # systemctl enable httpd
-              # echo "<h1>Hello Safeer Ahmad from $(hostname -f)</h1>" > /var/www/html/index.html
-              sudo yum install nginx -y
-              sudo systemctl start nginx
               aws s3 sync s3://safeer-aws-cli-bucket-1234 ./web
-              cp /web/index.html /var/www/html/index.html
+              cp web/index.html /var/www/html/index.html
+              sudo systemctl start httpd
               EOF
   
   tags = {
