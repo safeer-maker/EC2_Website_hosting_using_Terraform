@@ -69,4 +69,23 @@ user_data = <<-EOF
 The sh file can also be passed to load the script.
 `user_data = file("${path.module}/script.sh")`
 
-## EC2 IAM role
+# Web hosting
+
+Ec2 isnatnce is set to host a web side from an s3 bucket. the bucket is not public at all.
+To overcome this task I have uploaded the index.html file to s3 bucket.
+The user data on creation of ec2 is used to fetch index.html file and stat web server usign httpd
+
+```bash
+#!/bin/bash
+yum update -y
+yum install -y httpd
+systemctl start httpd
+systemctl enable httpd
+aws s3 sync s3://${var.bucket_name}/web ./web
+cp web/index.html /var/www/html/index.html
+systemctl restart httpd
+```
+
+> You can pass ec2 user data in inline code. or can use a file to pass the user code. 
+
+

@@ -19,4 +19,13 @@ resource "aws_s3_object" "file_upload" {
   key = "web/index.html"
   source = local.index_file
   etag = filemd5(local.index_file)
+  lifecycle {
+    replace_triggered_by = [ terraform_data.file_update.output ]
+  }
+}
+
+# pervent the file from being updated
+# every single time with apply command
+resource "terraform_data" "file_update" {
+  input = filemd5(local.index_file)
 }

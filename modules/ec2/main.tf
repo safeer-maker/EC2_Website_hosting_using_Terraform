@@ -21,7 +21,7 @@ resource "aws_instance" "ec2_web" {
               yum install -y httpd
               systemctl start httpd
               systemctl enable httpd
-              aws s3 sync s3://web-s3-bucket-tf-143/web ./web
+              aws s3 sync s3://${var.bucket_name}/web ./web
               cp web/index.html /var/www/html/index.html
               systemctl restart httpd
               EOF
@@ -30,26 +30,3 @@ resource "aws_instance" "ec2_web" {
     Name = "tf_web_server"
   }
 }
-
-# resource "aws_iam_role" "ec2_role_to_s3" {
-#   name = local.IAM_role
-#   assume_role_policy = jsonencode({
-#   "Version": "2012-10-17",
-#   "Statement": [
-#     {
-#       "Sid": "VisualEditor0",
-#       "Effect": "Allow",
-#       "Action": [
-#         "s3:ListBucket",
-#         "s3:GetObject"
-#       ],
-#       "Resource": [
-#         "arn:aws:s3:::bucket-name",
-#         "arn:aws:s3:::bucket-name/*" 
-#       ]
-#     }
-#   ]
-# }
-# )
-  
-# }

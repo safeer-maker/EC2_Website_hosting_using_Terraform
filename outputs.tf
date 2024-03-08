@@ -42,10 +42,6 @@ output "aws_instance_id" {
   value = module.ec2.aws_instance_id
 }
 
-# output "aws_IAM_role" {
-#   value = module.ec2.aws_IAM_role
-# }
-
 ######################
 # output for S3 module
 
