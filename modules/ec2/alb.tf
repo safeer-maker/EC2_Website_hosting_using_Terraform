@@ -1,33 +1,3 @@
-# Create IAM role for ALB
-# resource "aws_iam_role" "ec2_role" {
-#   name = "ec2_role"
-#   assume_role_policy = <<EOF
-# {
-#   "Version": "2012-10-17",
-#   "Statement": [
-#     {
-#       "Action": "sts:AssumeRole",
-#       "Principal": {
-#         "Service": "ec2.amazonaws.com"
-#       },
-#       "Effect": "Allow",
-#       "Sid": ""
-#     }
-#   ]
-# }
-# EOF
-# }
-
-resource "aws_ami_from_instance" "web_ec2_ami" {
-  name = "web-ec2-ami"
-  source_instance_id = aws_instance.ec2_web.id
-
-  tags = {
-    terraform = "true",
-    Name = "web-ec2-ami-tf-143"
-  }
-}
-
 # Target from ALB to EC2
 resource "aws_lb_target_group" "web_target_group" {
   name        = "web-target-group"
@@ -54,7 +24,7 @@ resource "aws_lb" "Web_ALB" {
     security_groups    = [var.security_group_h]
     subnets            = [var.subnet_1_id, var.subnet_2_id]
 
-     enable_deletion_protection = true
+    enable_deletion_protection = false
 }
 
 
