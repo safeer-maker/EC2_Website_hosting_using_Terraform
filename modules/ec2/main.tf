@@ -14,7 +14,15 @@ resource "aws_instance" "ec2_web" {
   associate_public_ip_address = true
   iam_instance_profile = local.IAM_role
   
-  user_data = file("${path.root}/web/ec2_script.sh")
+  user_data = <<-EOF
+              #!/bin/bash
+              yum update -y
+              yum install -y httpd
+              systemctl start httpd
+              systemctl enable httpd
+              aws s3 sync s3://${var.bucket_name}/web /var/www/html/
+              systemctl restart httpd
+              EOF
   
   tags = {
     Name = "tf_web_server"
