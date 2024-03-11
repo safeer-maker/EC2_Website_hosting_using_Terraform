@@ -27,7 +27,6 @@ resource "aws_lb" "Web_ALB" {
     enable_deletion_protection = false
 }
 
-
 resource "aws_lb_listener" "front_end" {
   load_balancer_arn = aws_lb.Web_ALB.arn
   port              = "80"

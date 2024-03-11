@@ -24,6 +24,7 @@ module "vpc" {
 }
 
 module "ec2" {
+
     source = "./modules/ec2"
     subnet_1_id = module.vpc.public_subnet_1_id
     subnet_2_id = module.vpc.public_subnet_2_id
@@ -34,6 +35,7 @@ module "ec2" {
 
     # ALB variable
     vpc_id_ec2 = module.vpc.vpc_id
+    web_ami_id = var.ami_id
 
 }
 

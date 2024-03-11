@@ -31,6 +31,9 @@ variable "bucket_name_web" {
 #########################
 # EC2 variables
 
-
+variable "ami_id" {
+  type = string
+  default = "ami-0440d3b780d96b29d"
+}
 
 
