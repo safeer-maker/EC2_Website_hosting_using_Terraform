@@ -1,3 +1,9 @@
+# # The AMI resources needed to be modefied to use the AMI created from the instance
+# /*
+# Specaial Note:
+# the public ip address is require for isolated instances to run properly
+
+# */
 resource "aws_ami_from_instance" "web_ec2_ami" {
   name = "web-ec2-ami"
   source_instance_id = aws_instance.ec2_web.id
@@ -17,7 +23,7 @@ resource "aws_launch_template" "web_launch_template" {
   key_name = local.key_name
   # public_ip_address = true
   # user_data = base64encode (file("${path.root}/web/ec2_script.sh"))
-  user_data = base64encode (file("web/ec2_script.sh"))
+  # user_data = base64encode (file("web/ec2_script.sh"))
 
   tags = {
     terraform = "true",
