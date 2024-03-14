@@ -1,16 +1,16 @@
 terraform {
-    cloud {
-      organization = "safeerahmad"
-      workspaces {
-        project = "web_ec2_hosting"
-        tags = [ "environment", "ubuntu" ]
-      }
-    }
+    # cloud {
+    #   organization = "safeerahmad"
+    #   workspaces {
+    #     project = "web_ec2_hosting_desktop"
+    #     tags = [ "environment", "ubuntu" ]
+    #   }
+    # }
 
     required_providers {
         aws = {
         source  = "hashicorp/aws"
-        version = "5.39.1"
+        version = "5.40"
         }
     }
 }

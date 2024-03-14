@@ -17,6 +17,7 @@ resource "aws_launch_template" "web_launch_template" {
   key_name = local.key_name
   # public_ip_address = true
   # user_data = base64encode (file("${path.root}/web/ec2_script.sh"))
+  user_data = base64encode (file("web/ec2_script.sh"))
 
   tags = {
     terraform = "true",
