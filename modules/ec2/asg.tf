@@ -31,16 +31,34 @@ resource "aws_launch_template" "web_launch_template" {
   }
 }
 
-# # lets create an auto scalling group from this launch template
-# resource "aws_autoscaling_group" "web_asg" {
-#   name                      = "web-asg"
-#   max_size                  = 3
-#   min_size                  = 1
-#   desired_capacity          = 2
-#   vpc_zone_identifier       = [var.subnet_1_id, var.subnet_2_id]
-#   # load_balancers = [aws_lb.Web_ALB.name]
-#   launch_template {
-#     id = aws_launch_template.web_launch_template.id
-#     version = "$Latest"
-#   }
-# }
+# lets create an auto scalling group from this launch template
+resource "aws_autoscaling_group" "web_asg" {
+  name                      = "web-asg"
+  max_size                  = 4
+  min_size                  = 2
+  desired_capacity          = 3
+  vpc_zone_identifier       = [var.subnet_1_id, var.subnet_2_id]
+  # load_balancers            = [aws_lb.Web_ALB.arn]
+
+  health_check_grace_period = 20
+
+  launch_template {
+    id = aws_launch_template.web_launch_template.id
+    version = "$Latest"
+  }
+}
+
+resource "aws_autoscaling_attachment" "example" {
+  autoscaling_group_name = aws_autoscaling_group.web_asg.id
+  # elb                    = aws_lb.Web_ALB.id
+  lb_target_group_arn    = aws_lb_target_group.web_target_group.arn
+}
+
+resource "aws_autoscaling_traffic_source_attachment" "example" {
+  autoscaling_group_name = aws_autoscaling_group.web_asg.id
+
+  traffic_source {
+    identifier = aws_lb_target_group.web_target_group.arn
+    type       = "elbv2"
+  }
+}

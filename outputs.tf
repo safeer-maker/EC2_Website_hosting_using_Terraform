@@ -49,4 +49,6 @@ output "bucket_name" {
   value = module.s3.s3_bucket_id
   
 }
-
+output "load_balancers_dns" {
+  value = module.ec2.load_balancers_dns
+}

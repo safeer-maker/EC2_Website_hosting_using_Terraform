@@ -31,4 +31,4 @@ go.work
 *.tfstate.backup
 
 # web testing
-/web/*
+# /web/*
