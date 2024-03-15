@@ -28,3 +28,7 @@ output "public_subnet_2_AZ" {
 output "security_group_http" {
   value = aws_security_group.security_group_http.id
 }
+
+output "security_group_ssh" {
+  value = aws_security_group.security_group_ssh.id
+}

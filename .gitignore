@@ -29,3 +29,6 @@ go.work
 # terraform tfstate file
 *.tfstate
 *.tfstate.backup
+
+# web testing
+# /web/*

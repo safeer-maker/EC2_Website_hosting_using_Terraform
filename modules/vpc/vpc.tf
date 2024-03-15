@@ -85,7 +85,7 @@ resource "aws_route_table_association" "public_subnet_1_association" {
 
 resource "aws_route_table_association" "public_subnet_2_association" {
   route_table_id = aws_route_table.my_route_table.id
-  subnet_id = aws_subnet.public_subnet_1.id
+  subnet_id = aws_subnet.public_subnet_2.id
 }
 
 
@@ -98,6 +98,28 @@ resource "aws_security_group" "security_group_http" {
   ingress {
     from_port        = 80
     to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+
+  }
+  # all outbond ports are allowed
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1" # '-1' defined all ports
+    cidr_blocks      = ["0.0.0.0/0"]
+
+  }
+}
+
+resource "aws_security_group" "security_group_ssh" {
+  name   = "web_tf_ssh_allow"
+  vpc_id = aws_vpc.tf_vpc.id
+  
+  # Alowing http incoming only
+  ingress {
+    from_port        = 22
+    to_port          = 22
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
 
