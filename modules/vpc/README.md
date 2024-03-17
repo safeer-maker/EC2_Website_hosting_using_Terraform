@@ -1,13 +1,20 @@
 # VPC
 
-Creating a fully functional VPC required multiple itmes to work.
+Creating a fully functional VPC involves several components and configurations. This guide provides an overview of creating a VPC using Terraform.
+> main.tf is bot generated vpc. On the other end vpc.tf is self writen.
+
 ## Table of Contents
 
+- [VPC](#vpc)
+- [Subnets](#subnets)
+- [Internet Gateway](#internet-gateway)
+- [Route Table](#route-table)
+- [Security Group](#security-group)
 
 ## vpc
-A VPC is a regional services. You can create your own vpc. Its a free services which isolate and provide network to sub modules in a region. You can have multiple VPC in one region with will be isoloated form each other.
+Subnets are Availability Zone (AZ) scoped. They help isolate resources within a specific AZ. You can create multiple subnets within a VPC.
 
-[VPC in tf](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc#cidr_block)
+[Learn more about VPC in Terraform] (https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc#cidr_block)
 
 ```go
 resource "aws_vpc" "main" {
@@ -17,8 +24,6 @@ resource "aws_vpc" "main" {
 > We will create four subnets in this VPC.
  - Public Subnet
     * Two public subnets so that we can access ec2 hosted website from  internet
- - Private Subnet 
-    * Two private subnets so that the ec2 instance are access thorough only cloudfront for web hosting.
 
 ## Subnets
 
@@ -35,7 +40,6 @@ resource "aws_subnet" "main" {
 ```
 
  > Creating two public subnets for testing purposes. They did not serve the application purposed but testing is always good.
- > Two private subnets will be used for cloudfront destribution. 
 
 ## Internet gateway
 
@@ -69,6 +73,7 @@ resource "aws_route_table" "example" {
 Route table can attach inline network or NAT gateway.
 
 To attach a subnet to route table you need to add `aws_route_table_association`module. ** Each subnet must have a seperate table association module to associate it to route table**
+
 ```go
 resource "aws_route_table_association" "public_subnet_1_association" {
   route_table_id = aws_route_table.my_route_table.id

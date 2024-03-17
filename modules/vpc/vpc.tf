@@ -1,8 +1,10 @@
+# Local variable for Avalibility Zones
 locals {
   availability_zone_1   = "us-east-1a"
   availability_zone_2 = "us-east-1b"
 }
 
+# Local variable for names of VPC, Internet Gateway, Route Table, Subnets 
 locals {
   vpc_name        = "web_tf_vpc"
   ig_name         = "web_tf_igw"
@@ -52,9 +54,7 @@ resource "aws_subnet" "public_subnet_2" {
   }
 }
 
-# private sub nets
-
-#Internet gateway
+# Internet gateway
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.tf_vpc.id
 
@@ -64,6 +64,7 @@ resource "aws_internet_gateway" "gw" {
   }
 }
 
+# Route Table
 resource "aws_route_table" "my_route_table" {
   vpc_id = aws_vpc.tf_vpc.id
 
@@ -88,13 +89,12 @@ resource "aws_route_table_association" "public_subnet_2_association" {
   subnet_id = aws_subnet.public_subnet_2.id
 }
 
-
-
+# AWS Security Group
 resource "aws_security_group" "security_group_http" {
   name   = "web_tf_http_allow"
   vpc_id = aws_vpc.tf_vpc.id
   
-  # Alowing http incoming only
+  # Allowing http incoming only
   ingress {
     from_port        = 80
     to_port          = 80
@@ -102,7 +102,7 @@ resource "aws_security_group" "security_group_http" {
     cidr_blocks      = ["0.0.0.0/0"]
 
   }
-  # all outbond ports are allowed
+  # All outbond ports are allowed
   egress {
     from_port        = 0
     to_port          = 0
@@ -116,7 +116,7 @@ resource "aws_security_group" "security_group_ssh" {
   name   = "web_tf_ssh_allow"
   vpc_id = aws_vpc.tf_vpc.id
   
-  # Alowing http incoming only
+  # Allowing ssh incoming only
   ingress {
     from_port        = 22
     to_port          = 22
@@ -124,7 +124,7 @@ resource "aws_security_group" "security_group_ssh" {
     cidr_blocks      = ["0.0.0.0/0"]
 
   }
-  # all outbond ports are allowed
+  # All outbond ports are allowed
   egress {
     from_port        = 0
     to_port          = 0
