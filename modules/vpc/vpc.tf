@@ -133,3 +133,55 @@ resource "aws_security_group" "security_group_ssh" {
 
   }
 }
+
+# Private subnet resources
+
+# first private subnet
+
+resource "aws_subnet" "private_subnet_1" {
+  vpc_id     = aws_vpc.tf_vpc.id
+  cidr_block = "10.0.6.0/24"
+  availability_zone = local.availability_zone_1
+
+  tags = {
+    terraform = "true"
+    Name = local.subnet_name_p1
+  }
+}
+
+# second public subnet
+resource "aws_subnet" "private_subnet_2" {
+  vpc_id     = aws_vpc.tf_vpc.id
+  cidr_block = "10.0.7.0/24"
+  availability_zone = local.availability_zone_2
+
+  tags = {
+    terraform = "true"
+    Name = local.subnet_name_p2
+  }
+}
+
+# Route Table
+resource "aws_route_table" "my_route_table_private" {
+  vpc_id = aws_vpc.tf_vpc.id
+
+  # route {
+  #   cidr_block = "0.0.0.0/0"
+  #   gateway_id = aws_internet_gateway.gw.id
+  # }
+
+  tags = {
+    terraform = "true"
+    Name      = local.rtc_name
+  }
+}
+
+resource "aws_route_table_association" "private_subnet_1_association" {
+  route_table_id = aws_route_table.my_route_table_private.id
+  subnet_id = aws_subnet.private_subnet_1.id
+}
+
+resource "aws_route_table_association" "private_subnet_2_association" {
+  route_table_id = aws_route_table.my_route_table_private.id
+  subnet_id = aws_subnet.private_subnet_2.id
+}
