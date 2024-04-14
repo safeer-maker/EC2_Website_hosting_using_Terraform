@@ -1,87 +1,133 @@
-# # locals {
-# #   availability_zone   = "us-east-1a"
-# #   availability_zone_2 = "us-east-1b"
-# # }
+# Local variable for names of VPC, Internet Gateway, Route Table, Subnets 
+locals {
+  Az_names = data.aws_availability_zones.available.names
 
-# # locals {
-# #   vpc_name        = "web_tf_vpc"
-# #   ig_name         = "web_tf_igw"
-# #   rtc_name        = "web_tf_rt"
-# #   subnet_name     = "web_tf_subnet"
-# #   subnet_name_2   = "web_tf_subnet_2"
-# # }
+}
 
-# # Create a VPC
-# resource "aws_vpc" "my_vpc" {
-#   cidr_block = "10.0.0.0/16"
-  
-#   tags = {
-#     terraform = "true"
-#     Name = local.vpc_name
-#   }
-# }
+# Cretae sub nets in all AZ's
+data "aws_availability_zones" "available" {
+  state = "available"
+}
 
-# # Create an internet gateway
-# resource "aws_internet_gateway" "my_igw" {
-#   vpc_id = aws_vpc.my_vpc.id
-  
-#   tags = {
-#     terraform = "true"
-#     Name = local.ig_name
-#   }
-# }
+# Create a VPC
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc#cidr_block
+resource "aws_vpc" "tf_vpc" {
 
-# # Create a route table
-# resource "aws_route_table" "my_route_table" {
-#   vpc_id = aws_vpc.my_vpc.id
+  # cidr block gives us the range of Ip addresses in an VPC
+  cidr_block = "10.0.0.0/16"
+
+  tags = {
+    terraform = "true"
+    # To give name of vpc use name in tag.
+    Name  = "${var.project_name}_vpc"
+  }
+}
+
+resource "aws_subnet" "tf_private_subnet" {
+  for_each = {for idx, az in local.Az_names : idx => az}
+  vpc_id = aws_vpc.tf_vpc.id
+  cidr_block = cidrsubnet(aws_vpc.tf_vpc.cidr_block, 8, (each.key + (length(local.Az_names) * 0) ))
+  availability_zone = each.value
+
+  tags = {
+    terraform = "true"
+    Name = "${var.project_name}_subnet_private_${each.key}"
+  }
+}
+
+
+# Internet gateway
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.tf_vpc.id
+
+  tags = {
+    terraform = "true"
+    Name = "${var.project_name}_ig"
+  }
+}
+
+# Route Table
+resource "aws_route_table" "my_route_table" {
+  vpc_id = aws_vpc.tf_vpc.id
 
 #   route {
 #     cidr_block = "0.0.0.0/0"
-#     gateway_id = aws_internet_gateway.my_igw.id
+#     gateway_id = aws_internet_gateway.gw.id
 #   }
 
-#   tags = {
-#     terraform = "true"
-#     Name = local.rtc_name
-#   }
-# }
+  tags = {
+    terraform = "true"
+    Name      = "${var.project_name}_private_route_table"
+  }
+}
 
-# # Create a subnet
-# resource "aws_subnet" "my_subnet" {
-#     vpc_id            = aws_vpc.my_vpc.id
-#     cidr_block        = "10.0.1.0/24"
-#     availability_zone = local.availability_zone_2
-    
-#     tags = {
-#     terraform = "true"
-#     Name = local.subnet_name
-#   }
-# }
+resource "aws_route_table_association" "public_subnet_1_association" {
+  count = length(local.Az_names)
 
+  route_table_id = aws_route_table.my_route_table.id
+  subnet_id = aws_subnet.tf_private_subnet[count.index].id
+}
 
-# # Associate the route table with the VPC's main subnet
-# resource "aws_route_table_association" "my_route_table_association" {
-#   subnet_id      = aws_subnet.my_subnet.id
-#   route_table_id = aws_route_table.my_route_table.id
+# AWS Security Group
+resource "aws_security_group" "security_group_http" {
+  name   = "web_tf_http_allow"
+  vpc_id = aws_vpc.tf_vpc.id
+  
+  # Allowing http incoming only
+  ingress {
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
 
-# }
+  }
+  # All outbond ports are allowed
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1" # '-1' defined all ports
+    cidr_blocks      = ["0.0.0.0/0"]
 
-# resource "aws_security_group" "public_sg" {
-#   name        = "public_sg_tf"
-#   description = "Allow inbound traffic"
-#   vpc_id      = aws_vpc.my_vpc.id
+  }
+}
 
-#   egress {
-#     from_port   = 0
-#     to_port     = 0
-#     protocol    = "-1"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
+resource "aws_security_group" "security_group_ssh" {
+  name   = "web_tf_ssh_allow"
+  vpc_id = aws_vpc.tf_vpc.id
+  
+  # Allowing ssh incoming only
+  ingress {
+    from_port        = 22
+    to_port          = 22
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+  # All outbond ports are allowed
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1" # '-1' defined all ports
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+}
 
-#   ingress{
-#     from_port   = 80
-#     to_port     = 80
-#     protocol    = "tcp"
-#     cidr_blocks = ["0.0.0.0/0"]
-#   }
-# }
+resource "aws_eip" "nat_gateway" {
+  count = length(aws_subnet.tf_private_subnet)
+
+  tags = {
+    Name = "${var.project_name}_private_nat_gateway_eip_${count.index}"
+  }
+}
+
+resource "aws_nat_gateway" "default" {
+  count = length(aws_subnet.tf_private_subnet)
+
+  connectivity_type = "public"
+  subnet_id         = aws_subnet.tf_private_subnet[count.index].id
+  allocation_id     = aws_eip.nat_gateway[count.index].id
+  depends_on        = [aws_internet_gateway.gw]
+
+  tags = {
+    Name = "${var.project_name}_private_nat_gateway_${count.index}"
+  }
+}

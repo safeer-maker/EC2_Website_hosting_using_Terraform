@@ -1,39 +1,27 @@
-variable "subnet_1_id" {
+############################
+# vpc variables
+variable "project_name" {
   type = string
+  default = "web_tf"
 }
 
-variable "security_group_h" {
+variable "vpc_cidr_block" {
   type = string
+  default = "10.0.0.0/16"
 }
 
-variable "security_group_ssh" {
-  type = string
-}
+# #########################
+# # S3 bucket variables
 
-variable "vpc_id" {
-  type = string
-  default = "vpc-0a5d9e7a9f4f4b9e5"
-}
+# variable "bucket_name_web" {
+#   type = string
+#   default = "web-s3-bucket-tf-143"
+# }
 
-variable "subnet_2_id" {
-  type = string
-  default = "sam"
-}
+# #########################
+# # EC2 variables
 
-#########################
-# S3 bucket variables
-
-variable "bucket_name_web" {
-  type = string
-  default = "web-s3-bucket-tf-143"
-}
-
-#########################
-# EC2 variables
-
-variable "ami_id" {
-  type = string
-  default = "ami-0440d3b780d96b29d"
-}
-
-
+# variable "ami_id" {
+#   type = string
+#   default = "ami-0440d3b780d96b29d"
+# }

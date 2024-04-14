@@ -97,3 +97,7 @@ resource "aws_security_group" "example" {
   egress  = []
 }
 ```
+## Elastic Ip addresses
+
+
+
