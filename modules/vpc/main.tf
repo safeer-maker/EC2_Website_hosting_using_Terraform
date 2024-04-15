@@ -1,6 +1,6 @@
 # Local variable for names of VPC, Internet Gateway, Route Table, Subnets 
 locals {
-  Az_names = data.aws_availability_zones.available.names
+  Az_names = slice( data.aws_availability_zones.available.names , 0, var.max_subnet)
 
 }
 
@@ -14,7 +14,7 @@ data "aws_availability_zones" "available" {
 resource "aws_vpc" "tf_vpc" {
 
   # cidr block gives us the range of Ip addresses in an VPC
-  cidr_block = "10.0.0.0/16"
+  cidr_block = var.vpc_cidr_block
 
   tags = {
     terraform = "true"
@@ -34,7 +34,6 @@ resource "aws_subnet" "tf_private_subnet" {
     Name = "${var.project_name}_subnet_private_${each.key}"
   }
 }
-
 
 # Internet gateway
 resource "aws_internet_gateway" "gw" {
@@ -87,7 +86,6 @@ resource "aws_security_group" "security_group_http" {
     to_port          = 0
     protocol         = "-1" # '-1' defined all ports
     cidr_blocks      = ["0.0.0.0/0"]
-
   }
 }
 
@@ -111,23 +109,23 @@ resource "aws_security_group" "security_group_ssh" {
   }
 }
 
-resource "aws_eip" "nat_gateway" {
-  count = length(aws_subnet.tf_private_subnet)
+# resource "aws_eip" "nat_gateway" {
+#   count = length(aws_subnet.tf_private_subnet)
 
-  tags = {
-    Name = "${var.project_name}_private_nat_gateway_eip_${count.index}"
-  }
-}
+#   tags = {
+#     Name = "${var.project_name}_private_nat_gateway_eip_${count.index}"
+#   }
+# }
 
-resource "aws_nat_gateway" "default" {
-  count = length(aws_subnet.tf_private_subnet)
+# resource "aws_nat_gateway" "default" {
+#   count = length(aws_subnet.tf_private_subnet)
 
-  connectivity_type = "public"
-  subnet_id         = aws_subnet.tf_private_subnet[count.index].id
-  allocation_id     = aws_eip.nat_gateway[count.index].id
-  depends_on        = [aws_internet_gateway.gw]
+#   connectivity_type = "public"
+#   subnet_id         = aws_subnet.tf_private_subnet[count.index].id
+#   allocation_id     = aws_eip.nat_gateway[count.index].id
+#   depends_on        = [aws_internet_gateway.gw]
 
-  tags = {
-    Name = "${var.project_name}_private_nat_gateway_${count.index}"
-  }
-}
+#   tags = {
+#     Name = "${var.project_name}_private_nat_gateway_${count.index}"
+#   }
+# }

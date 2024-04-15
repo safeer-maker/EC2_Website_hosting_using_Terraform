@@ -11,12 +11,12 @@ variable "vpc_cidr_block" {
 }
 
 # #########################
-# # S3 bucket variables
+# S3 bucket variables
 
-# variable "bucket_name_web" {
-#   type = string
-#   default = "web-s3-bucket-tf-143"
-# }
+variable "bucket_name_web" {
+  type = string
+  default = "web-s3-bucket-tf-143"
+}
 
 # #########################
 # # EC2 variables

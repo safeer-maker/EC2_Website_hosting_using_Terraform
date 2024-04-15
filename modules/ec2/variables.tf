@@ -1,9 +1,5 @@
-variable "subnet_1_id" {
-  type = string
-}
-
-variable "subnet_2_id" {
-  type = string
+variable "subnet_ids" {
+  type = list(string)
 }
 
 variable "security_group_h" {
@@ -24,4 +20,5 @@ variable "vpc_id_ec2" {
 
 variable "web_ami_id" {
   type = string
+  default = "ami-0440d3b780d96b29d"
 }

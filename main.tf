@@ -29,25 +29,24 @@ module "vpc" {
 
 }
 
-# module "ec2" {
+module "ec2" {
 
-#     source = "./modules/ec2"
-#     subnet_1_id = module.vpc.private_subnet_1_id
-#     subnet_2_id = module.vpc.private_subnet_2_id
+    source = "./modules/ec2"
+    subnet_ids = values(module.vpc.subnet_ids)[*].id #module.vpc.subnet_ids[*]
     
-#     security_group_h = module.vpc.security_group_http
-#     security_group_ssh = module.vpc.security_group_ssh
-#     bucket_name = module.s3.s3_bucket_id
+    security_group_h = module.vpc.security_group_http
+    security_group_ssh = module.vpc.security_group_ssh
+    bucket_name = module.s3.s3_bucket_id
 
-#     # ALB variable
-#     vpc_id_ec2 = module.vpc.vpc_id
-#     web_ami_id = var.ami_id
+    # ALB variable
+    vpc_id_ec2 = module.vpc.vpc_id
+    # web_ami_id = var.ami_id
 
-# }
+}
 
-# module "s3" {
+module "s3" {
   
-#   source = "./modules/s3"
-#   bucket_name_web = var.bucket_name_web
-# }
+  source = "./modules/s3"
+  bucket_name_web = var.bucket_name_web
+}
 
